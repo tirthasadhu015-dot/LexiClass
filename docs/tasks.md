@@ -167,14 +167,8 @@
 
 ## Current Progress
 
-**Status:** Phase 5 pipeline implemented; training CLI correctly stopped because the CSV has 0 records; tests have not been run
+**Status:** Phase 6 evaluator implemented; CLI verified it stops on the 0-record dataset without creating evaluation outputs
 
-**Next Priority:** Add genuine permitted records for all five categories, then run training and evaluate the results.
+**Next Priority:** Add genuine labeled data, train models, then generate held-out evaluation reports and figures.
 
 **Completion Rule:** Mark a task as completed only after it has been implemented and tested.
-
-
-
-
-
-

@@ -192,16 +192,11 @@ The vectorizer and classifier are saved separately as `tfidf_vectorizer.joblib` 
 
 ## 7. Model Evaluation
 
-The classification model will be evaluated using the following performance metrics:
+`evaluate_model.py` invokes `src/evaluation.py`. It requires the unchanged CSV used for training, the matching scikit-learn version, saved training metadata, both candidate classifiers, and the shared fitted vectorizer. It recreates the stratified held-out split from the recorded seed and verifies the dataset SHA-256 before scoring. Training data is never substituted for test data.
 
-- Accuracy
-- Precision
-- Recall
-- F1-Score
-- Confusion Matrix
+For each candidate, evaluation generates accuracy, macro precision, macro recall, macro F1, per-category precision/recall/F1/support, a classification report, and a confusion matrix. It also reports training/test class distributions and flags a possible training class imbalance when the largest-to-smallest class ratio is at least 1.5; this is a screening heuristic, not a guarantee of bias or quality.
 
-These metrics will help determine how accurately the system classifies legal documents across different categories.
-
+Successful runs save `reports/evaluation/evaluation_report.json`, `classification_report.txt`, `model_comparison.csv`, two confusion-matrix figures, a metric comparison figure, and a training class-distribution figure. If data, model artifacts, or matching provenance are unavailable, evaluation stops without generating reports or figures. Performance remains informational and depends on dataset size, label quality, class balance, source diversity, and the single held-out split.
 ---
 
 ## 8. Project Folder Structure
@@ -299,8 +294,3 @@ LexiClass AI aims to provide an automated and efficient solution for legal docum
 By combining document text extraction, NLP preprocessing, TF-IDF feature extraction, and supervised classification algorithms, the system will help users organize legal documents into predefined topic categories.
 
 The modular architecture ensures that the application remains maintainable, scalable, and suitable for future enhancements.
-
-
-
-
-

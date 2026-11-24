@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from dataclasses import dataclass
 from pathlib import Path
@@ -10,6 +11,7 @@ from typing import Any
 
 import joblib
 import pandas as pd
+import sklearn
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
@@ -104,7 +106,7 @@ def _new_classifiers(random_state: int) -> dict[str, Any]:
     }
 
 
-def _prepare_dataset(dataset_path: str | Path) -> tuple[list[str], list[str], dict[str, int]]:
+def prepare_dataset_for_modeling(dataset_path: str | Path) -> tuple[list[str], list[str], dict[str, int]]:
     dataframe, report = load_and_validate_dataset(dataset_path)
     if report.errors:
         raise DatasetTrainingError("Dataset validation failed: " + " ".join(report.errors))
@@ -199,7 +201,7 @@ def train_and_evaluate(
     if not 0 < test_size < 1:
         raise ValueError("test_size must be greater than 0 and less than 1.")
 
-    texts, labels, class_distribution = _prepare_dataset(dataset_path)
+    texts, labels, class_distribution = prepare_dataset_for_modeling(dataset_path)
     try:
         x_train, x_test, y_train, y_test = train_test_split(
             texts,
@@ -271,12 +273,24 @@ def train_and_evaluate(
 
     output_directory = Path(model_dir)
     output_directory.mkdir(parents=True, exist_ok=True)
+    candidate_directory = output_directory / "candidates"
+    candidate_directory.mkdir(parents=True, exist_ok=True)
     classifier_path = output_directory / CLASSIFIER_FILENAME
     vectorizer_path = output_directory / VECTORIZER_FILENAME
     evaluation_path = output_directory / EVALUATION_FILENAME
+    candidate_filenames = {
+        "Logistic Regression": "logistic_regression.joblib",
+        "Linear SVM": "linear_svm.joblib",
+    }
+    candidate_paths = {
+        name: candidate_directory / filename
+        for name, filename in candidate_filenames.items()
+    }
 
     report = {
         "dataset_path": str(Path(dataset_path)),
+        "dataset_sha256": hashlib.sha256(Path(dataset_path).read_bytes()).hexdigest(),
+        "scikit_learn_version": sklearn.__version__,
         "sample_count": len(texts),
         "training_count": len(x_train),
         "test_count": len(x_test),
@@ -284,9 +298,15 @@ def train_and_evaluate(
         "split": {"test_size": test_size, "random_state": random_state, "stratified": True},
         "selection_metric": "mean 5-fold cross-validation macro F1",
         "selected_model": selected_name,
+        "candidate_artifacts": {
+            name: str(Path("candidates") / path.name)
+            for name, path in candidate_paths.items()
+        },
         "candidate_results": {name: result.as_dict() for name, result in results.items()},
     }
 
+    for name, candidate in fitted_classifiers.items():
+        joblib.dump(candidate, candidate_paths[name])
     joblib.dump(fitted_classifiers[selected_name], classifier_path)
     joblib.dump(vectorizer, vectorizer_path)
     evaluation_path.write_text(json.dumps(report, indent=2), encoding="utf-8")

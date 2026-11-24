@@ -110,3 +110,13 @@ Run the unit tests with:
 ```powershell
 python -m unittest discover -s tests -p "test_*.py" -v
 ```
+
+## Model evaluation
+
+Run evaluation only after training succeeds and the original CSV remains unchanged:
+
+```powershell
+python evaluate_model.py
+```
+
+The evaluator verifies dataset provenance and recreates the recorded stratified test split. It compares the saved Logistic Regression and Linear SVM candidates using only that held-out data. Reports and figures are written to `reports/evaluation/`. With the current header-only dataset (0 records), evaluation correctly stops and produces no scores or figures.

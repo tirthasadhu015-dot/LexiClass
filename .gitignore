@@ -23,3 +23,6 @@ dataset/*
 !dataset/legal_documents.csv
 
 
+
+# Matplotlib cache created alongside evaluation reports
+reports/evaluation/.matplotlib/
