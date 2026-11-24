@@ -20,3 +20,6 @@ models/*
 !models/.gitkeep
 dataset/*
 !dataset/.gitkeep
+!dataset/legal_documents.csv
+
+

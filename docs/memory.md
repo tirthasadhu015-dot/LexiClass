@@ -1,4 +1,4 @@
-# LexiClass AI — Project Memory
+﻿# LexiClass AI â€” Project Memory
 
 ## 1. Project Identity
 
@@ -62,13 +62,13 @@ These categories should remain consistent across the dataset, model training, pr
 The application follows a modular pipeline:
 
 User  
-→ Document Upload  
-→ File Validation  
-→ Text Extraction  
-→ NLP Preprocessing  
-→ TF-IDF Feature Extraction  
-→ Machine Learning Classification  
-→ Result Display
+â†’ Document Upload  
+â†’ File Validation  
+â†’ Text Extraction  
+â†’ NLP Preprocessing  
+â†’ TF-IDF Feature Extraction  
+â†’ Machine Learning Classification  
+â†’ Result Display
 
 Each module should have a clearly defined responsibility.
 
@@ -78,31 +78,31 @@ Each module should have a clearly defined responsibility.
 
 ```text
 LexiClass_AI/
-│
-├── dataset/
-│   └── legal_documents.csv
-│
-├── models/
-│   ├── classifier.pkl
-│   └── tfidf_vectorizer.pkl
-│
-├── uploads/
-│
-├── src/
-│   ├── __init__.py
-│   ├── data_preprocessing.py
-│   ├── text_extraction.py
-│   ├── feature_extraction.py
-│   ├── model_training.py
-│   └── prediction.py
-│
-├── app.py
-├── test.py
-├── architecture.md
-├── design.md
-├── memory.md
-├── requirements.txt
-└── README.md
+â”‚
+â”œâ”€â”€ dataset/
+â”‚   â””â”€â”€ legal_documents.csv
+â”‚
+â”œâ”€â”€ models/
+â”‚   â”œâ”€â”€ classifier.pkl
+â”‚   â””â”€â”€ tfidf_vectorizer.pkl
+â”‚
+â”œâ”€â”€ uploads/
+â”‚
+â”œâ”€â”€ src/
+â”‚   â”œâ”€â”€ __init__.py
+â”‚   â”œâ”€â”€ data_preprocessing.py
+â”‚   â”œâ”€â”€ text_extraction.py
+â”‚   â”œâ”€â”€ feature_extraction.py
+â”‚   â”œâ”€â”€ model_training.py
+â”‚   â””â”€â”€ prediction.py
+â”‚
+â”œâ”€â”€ app.py
+â”œâ”€â”€ test.py
+â”œâ”€â”€ architecture.md
+â”œâ”€â”€ design.md
+â”œâ”€â”€ memory.md
+â”œâ”€â”€ requirements.txt
+â””â”€â”€ README.md
 ```
 
 ---
@@ -113,9 +113,12 @@ The dataset should contain legal document text and corresponding category labels
 
 ### Dataset Columns
 
-- Document ID
-- Document Text
-- Category
+- `document_id`: stable unique record identifier.
+- `text`: genuine legal document text permitted for this use.
+- `category`: one of the five supported category labels.
+- `source`: traceable citation, collection, or source description.
+- `source_url`: optional source URL.
+- `license`: optional license or documented usage terms.
 
 ### Dataset Requirements
 
@@ -129,8 +132,14 @@ The dataset should contain legal document text and corresponding category labels
 Dataset file:
 
 `dataset/legal_documents.csv`
+The initial CSV is a header-only template, not a completed dataset. `src/dataset_validation.py` validates required fields, supported categories, duplicate IDs and normalized text, and reports class counts including zero-count categories. Add only genuine records with appropriate use rights and retain their source information.
 
 ---
+
+
+## Text Extraction Implementation
+
+`src/text_extraction.py` extracts PDF text with PyPDF and DOCX paragraphs/tables with python-docx. It accepts bytes, checks the filename extension and a 20 MiB upload cap, avoids writing upload content to disk, and preserves line and paragraph boundaries while normalizing excess whitespace. Empty, corrupt, encrypted, oversized, and unsupported files raise clear extraction errors. Scanned PDFs without a text layer are unsupported until OCR is added.
 
 ## 8. NLP Processing Guidelines
 
@@ -150,6 +159,10 @@ Do not unnecessarily remove important legal terminology, section references, num
 
 ---
 
+
+## NLP Preprocessing Decisions
+
+`src/data_preprocessing.py` exposes `normalize_legal_text`, `tokenize_legal_text`, `remove_stop_words`, and `preprocess_text`. Default preprocessing preserves original wording, case, punctuation, citations, negations, and paragraph structure while normalizing formatting artifacts. Stopword removal is opt-in and caller-supplied; protected negations and legal terms remain. Stemming and lemmatization are not applied because they can distort legal terminology. Training and inference should call the same `preprocess_text` function with identical options.
 ## 9. Machine Learning Guidelines
 
 The initial model pipeline should use:
@@ -182,6 +195,10 @@ The initial model pipeline should use:
 
 ---
 
+
+## Model Training Decisions
+
+`train_model.py` invokes the separate pipeline in `src/model_training.py`. Training requires all five labels and at least 10 records per category so a stratified 80/20 holdout and five-fold CV can be formed. Logistic Regression and Linear SVM are compared by cross-validated macro F1 on training data; held-out test metrics do not drive selection. TF-IDF is fitted only on training partitions, and the final fitted vectorizer is saved and reused for inference. No model artifacts or performance metrics exist until training succeeds on genuine labeled data.
 ## 10. Model Evaluation
 
 The system should evaluate the trained model using:
@@ -381,3 +398,9 @@ LexiClass AI will be considered functionally complete when:
 
 **Project Identity:** LexiClass AI  
 **Core Principle:** Intelligent Legal Classification with a Simple and Reliable User Experience.
+
+
+
+
+
+

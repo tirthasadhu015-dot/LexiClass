@@ -1,4 +1,4 @@
-# LexiClass AI
+﻿# LexiClass AI
 ## System Architecture Document
 
 **Project Title:** Legal Document Topic Classification using NLP  
@@ -35,19 +35,19 @@ The application follows a modular architecture consisting of six major component
 ### Architecture Workflow
 
 User  
-↓  
+â†“  
 Document Upload Interface  
-↓  
+â†“  
 Document Text Extraction  
-↓  
+â†“  
 NLP Text Preprocessing  
-↓  
+â†“  
 TF-IDF Feature Extraction  
-↓  
+â†“  
 Machine Learning Classification Model  
-↓  
+â†“  
 Predicted Legal Category  
-↓  
+â†“  
 Result Display Interface
 
 ---
@@ -94,20 +94,22 @@ This module extracts textual content from uploaded documents.
 - Handle empty or unreadable documents.
 - Pass extracted text to the preprocessing module.
 
+
+The extraction module accepts uploaded bytes and a filename, validates the `.pdf` or `.docx` extension, enforces a 20 MiB upload limit, and parses in memory without writing uploads to disk. It normalizes horizontal whitespace while preserving paragraph/page breaks. Scanned PDFs with no text layer are reported as having no extractable text; OCR is outside the initial scope.
+
 ### 4.3 NLP Preprocessing Module
 
-This module cleans and prepares extracted legal text for machine learning.
+This module conservatively normalizes extracted text for machine learning while preserving legal wording.
 
 **Processing Steps:**
-- Convert text into lowercase.
-- Remove unnecessary special characters.
-- Remove extra spaces.
-- Perform tokenization.
-- Remove unnecessary stopwords where appropriate.
-- Normalize textual content.
+- Normalize Unicode composition, line endings, non-breaking spaces, and invisible formatting artifacts.
+- Collapse excess horizontal whitespace and repeated blank lines while preserving paragraph boundaries.
+- Preserve capitalization, punctuation, legal citations, section numbers, negations, and hyphenated terminology.
+- Provide a reusable legal-aware tokenizer; do not remove stopwords by default.
+- Allow optional caller-supplied stopword filtering while protecting legal negations and selected legal terms.
+- Do not stem or lemmatize by default; legal terminology may change meaning under these transformations.
 
-**Output:** Cleaned legal document text.
-
+**Output:** Normalized text from `preprocess_text`, shared by training and inference.
 ### 4.4 Feature Extraction Module
 
 This module converts processed text into numerical features using TF-IDF (Term Frequency-Inverse Document Frequency).
@@ -154,13 +156,9 @@ The system requires a labelled dataset containing legal documents and their corr
 
 ### Dataset Structure
 
-| Document ID | Document Text | Category |
-|---|---|---|
-| 001 | Theft-related legal case... | Criminal Law |
-| 002 | Contract dispute between parties... | Civil Law |
-| 003 | Fundamental rights and constitution... | Constitutional Law |
-| 004 | Land ownership dispute... | Property Law |
-| 005 | Other legal matter... | Other Legal Domains |
+| document_id | text | category | source | source_url | license |
+|---|---|---|---|---|---|
+| *(empty template; add only genuine, permitted records)* | | | | | |
 
 ### Dataset Requirements
 
@@ -170,24 +168,26 @@ The system requires a labelled dataset containing legal documents and their corr
 - Ensure sufficient examples for each category.
 - Divide the dataset into training and testing sets.
 
+The initial CSV is `dataset/legal_documents.csv`. `src/dataset_validation.py` checks required columns, missing identifiers/text/labels/source, supported category labels, duplicate identifiers, duplicate normalized text, and reports counts for every supported category. `source` should provide a traceable citation or collection name; `source_url` and `license` provide additional provenance details when available. An empty template is not training data.
 ---
 
 ## 6. Model Training Architecture
 
-The model training pipeline follows these steps:
+The training entry point is `train_model.py`; reusable training logic lives in `src/model_training.py` and TF-IDF setup lives in `src/feature_extraction.py`.
 
-1. Load the labelled legal document dataset.
-2. Separate document text and category labels.
-3. Perform text preprocessing.
-4. Split the dataset into training and testing sets.
-5. Apply TF-IDF vectorization.
-6. Train Logistic Regression and/or SVM classifiers.
-7. Evaluate model performance.
-8. Select the best-performing model.
-9. Save the trained model and TF-IDF vectorizer for future predictions.
+1. Validate the CSV schema and records with `src/dataset_validation.py`.
+2. Require examples from all five categories and at least 10 records in each category. This minimum supports a stratified 80/20 holdout plus five-fold cross-validation; it is a training precondition, not a claim of statistical sufficiency for production use.
+3. Normalize text with the same `preprocess_text` function used by the vectorizer during inference.
+4. Create a reproducible stratified train/test split.
+5. Compare Logistic Regression and Linear SVM using five-fold cross-validation on the training split. Each fold fits its own TF-IDF vectorizer only on that fold's training portion.
+6. Select by mean cross-validated macro F1, with cross-validated accuracy as a tie-breaker.
+7. Fit a final TF-IDF vectorizer only on the full training split; transform the held-out test split without refitting.
+8. Fit both candidate classifiers on the transformed training data and report accuracy, macro precision, macro recall, macro F1, per-category metrics, and a confusion matrix on held-out data.
+9. Save the selected classifier, its fitted vectorizer, and actual evaluation report under `models/`.
 
-**Important:** The same fitted TF-IDF vectorizer must be reused during prediction. It must not be independently fitted on uploaded documents.
+The vectorizer and classifier are saved separately as `tfidf_vectorizer.joblib` and `classifier.joblib`. Inference must load and reuse this exact fitted vectorizer. No artifacts are written when dataset validation or sufficiency checks fail.
 
+**Important:** The held-out test split is not used to select the model. No metrics are available until real, valid data is supplied and training completes.
 ---
 
 ## 7. Model Evaluation
@@ -208,29 +208,29 @@ These metrics will help determine how accurately the system classifies legal doc
 
 ```text
 LexiClass_AI/
-│
-├── dataset/
-│   └── legal_documents.csv
-│
-├── models/
-│   ├── classifier.pkl
-│   └── tfidf_vectorizer.pkl
-│
-├── uploads/
-│
-├── src/
-│   ├── __init__.py
-│   ├── data_preprocessing.py
-│   ├── text_extraction.py
-│   ├── feature_extraction.py
-│   ├── model_training.py
-│   └── prediction.py
-│
-├── app.py
-├── test.py
-├── architecture.md
-├── requirements.txt
-└── README.md
+â”‚
+â”œâ”€â”€ dataset/
+â”‚   â””â”€â”€ legal_documents.csv
+â”‚
+â”œâ”€â”€ models/
+â”‚   â”œâ”€â”€ classifier.pkl
+â”‚   â””â”€â”€ tfidf_vectorizer.pkl
+â”‚
+â”œâ”€â”€ uploads/
+â”‚
+â”œâ”€â”€ src/
+â”‚   â”œâ”€â”€ __init__.py
+â”‚   â”œâ”€â”€ data_preprocessing.py
+â”‚   â”œâ”€â”€ text_extraction.py
+â”‚   â”œâ”€â”€ feature_extraction.py
+â”‚   â”œâ”€â”€ model_training.py
+â”‚   â””â”€â”€ prediction.py
+â”‚
+â”œâ”€â”€ app.py
+â”œâ”€â”€ test.py
+â”œâ”€â”€ architecture.md
+â”œâ”€â”€ requirements.txt
+â””â”€â”€ README.md
 ```
 
 ---
@@ -299,3 +299,8 @@ LexiClass AI aims to provide an automated and efficient solution for legal docum
 By combining document text extraction, NLP preprocessing, TF-IDF feature extraction, and supervised classification algorithms, the system will help users organize legal documents into predefined topic categories.
 
 The modular architecture ensures that the application remains maintainable, scalable, and suitable for future enhancements.
+
+
+
+
+
