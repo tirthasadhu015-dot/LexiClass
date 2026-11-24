@@ -1,0 +1,22 @@
+﻿# Python bytecode and environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Local environment and editor files
+.env
+.vscode/
+.idea/
+
+# Streamlit local state
+.streamlit/secrets.toml
+
+# User uploads and generated model/data artifacts
+uploads/*
+!uploads/.gitkeep
+models/*
+!models/.gitkeep
+dataset/*
+!dataset/.gitkeep
