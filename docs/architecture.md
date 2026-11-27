@@ -1,4 +1,4 @@
-﻿# LexiClass AI
+# LexiClass AI
 ## System Architecture Document
 
 **Project Title:** Legal Document Topic Classification using NLP  
@@ -156,9 +156,7 @@ The system requires a labelled dataset containing legal documents and their corr
 
 ### Dataset Structure
 
-| document_id | text | category | source | source_url | license |
-|---|---|---|---|---|---|
-| *(empty template; add only genuine, permitted records)* | | | | | |
+The header-only CSV schema is `document_id,document_title,text,category,source,source_url,license,language`. Add only genuine, permitted records; the template contains no example document.
 
 ### Dataset Requirements
 
@@ -168,7 +166,7 @@ The system requires a labelled dataset containing legal documents and their corr
 - Ensure sufficient examples for each category.
 - Divide the dataset into training and testing sets.
 
-The initial CSV is `dataset/legal_documents.csv`. `src/dataset_validation.py` checks required columns, missing identifiers/text/labels/source, supported category labels, duplicate identifiers, duplicate normalized text, and reports counts for every supported category. `source` should provide a traceable citation or collection name; `source_url` and `license` provide additional provenance details when available. An empty template is not training data.
+The initial CSV is `dataset/legal_documents.csv`, with one reviewed row per original document. `dataset/source_register.csv` records collection-level source and license provenance. `src/dataset_validation.py` checks required schema and values, category labels, duplicate IDs and normalized text, missing direct URLs, short text requiring review, and class counts. `source_url` may be blank only when attribution is otherwise traceable in the source register; license is required. An empty template is not training data. See `dataset/README.md` for manual labeling and source-use rules.
 ---
 
 ## 6. Model Training Architecture
@@ -230,6 +228,9 @@ LexiClass_AI/
 
 ---
 
+## Streamlit Interface Layer
+
+`app.py` is the Streamlit entry point and delegates presentation to `src/streamlit_ui.py`. The UI calls the existing document extraction and prediction modules; it does not implement parsing or model logic itself. Inference normalizes extracted text with `preprocess_text`, transforms it using the saved fitted TF-IDF vectorizer, and passes those features to the saved classifier. Navigation includes only the implemented Dashboard, Classify Document, and About pages. Uploaded bytes remain in memory, with the 20 MiB limit enforced by Streamlit configuration and the extraction module. Classification stays unavailable unless both the trained classifier and its fitted vectorizer are present.
 ## 9. Application Workflow
 
 The complete application will work as follows:
@@ -294,3 +295,11 @@ LexiClass AI aims to provide an automated and efficient solution for legal docum
 By combining document text extraction, NLP preprocessing, TF-IDF feature extraction, and supervised classification algorithms, the system will help users organize legal documents into predefined topic categories.
 
 The modular architecture ensures that the application remains maintainable, scalable, and suitable for future enhancements.
+
+## Separate Legal Knowledge Base
+
+`src/legal_knowledge_base.py` provides an independent reference-data path. It loads the UTF-8 JSON source at `dataset/raw/indian_constitution.json`, validates the root list and record shape, preserves the ten source fields and source-provided URL, reports invalid/duplicate/incomplete records, and generates `dataset/constitution/processed/legal_reference.csv` plus `inspection_report.json`. Incomplete dictionary records are retained with empty source fields and counted; malformed non-dictionary rows and exact duplicates are reported and skipped. Reprocessing replaces only these generated outputs with a same-directory atomic replacement per file and never writes the source JSON.
+
+Search uses case-insensitive exact Act-code and section filters plus substring matching across title, description, keywords, purpose, and context. Combined filters are conjunctive. This knowledge base is separate from `dataset/legal_documents.csv`, annotation labels, TF-IDF training, and classifier inference. It does not map Acts or sections to the five ML categories.
+
+`src/streamlit_ui.py` adds a Legal Knowledge Base page while retaining Dashboard, Classify Document, and About Project. Results identify descriptions as dataset-provided, include purpose/context/penalty fields, and link to a source URL only when it is HTTP(S). Users are told to verify exact wording and current legal status at the provided source. The interface does not claim dataset summaries are official statutory wording, assert provisions are in force, or translate IPC entries into BNS entries. Results are reference aids only, not legal advice.

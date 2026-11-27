@@ -18,7 +18,26 @@ LEGAL_CATEGORIES = (
     "Other Legal Domains",
 )
 
-REQUIRED_COLUMNS = ("document_id", "text", "category", "source")
+REQUIRED_COLUMNS = (
+    "document_id",
+    "document_title",
+    "text",
+    "category",
+    "source",
+    "source_url",
+    "license",
+    "language",
+)
+REQUIRED_VALUE_COLUMNS = (
+    "document_id",
+    "document_title",
+    "text",
+    "category",
+    "source",
+    "license",
+    "language",
+)
+MIN_DOCUMENT_TEXT_CHARACTERS = 100
 
 
 @dataclass(frozen=True)
@@ -52,9 +71,9 @@ def _clean_column(values: pd.Series) -> pd.Series:
 def validate_dataset(dataframe: pd.DataFrame) -> DatasetValidationReport:
     """Validate dataset columns, required values, categories, and duplicates.
 
-    ``source_url`` and ``license`` may be included as additional provenance
-    columns. The required ``source`` column should contain a traceable citation
-    or collection name even when those optional columns are absent.
+    ``source_url`` is part of the schema but may be blank when a document has
+    no direct URL, provided the source is traceable through ``source`` and the
+    source register. License information is required for each record.
     """
 
     errors: list[str] = []
@@ -82,10 +101,25 @@ def validate_dataset(dataframe: pd.DataFrame) -> DatasetValidationReport:
 
     cleaned = {column: _clean_column(dataframe[column]) for column in REQUIRED_COLUMNS}
 
-    for column in ("document_id", "text", "category", "source"):
+    for column in REQUIRED_VALUE_COLUMNS:
         missing_count = int(cleaned[column].eq("").sum())
         if missing_count:
             errors.append(f"Missing {column} values: {missing_count} row(s).")
+
+    missing_source_urls = int(cleaned["source_url"].eq("").sum())
+    if missing_source_urls:
+        warnings.append(
+            f"Missing source_url values: {missing_source_urls} row(s); verify that source attribution is traceable in source_register.csv."
+        )
+
+    short_text_count = int(
+        cleaned["text"].map(lambda value: 0 < len(re.sub(r"\s+", " ", value)) < MIN_DOCUMENT_TEXT_CHARACTERS).sum()
+    )
+    if short_text_count:
+        errors.append(
+            f"Unusually short document text (<{MIN_DOCUMENT_TEXT_CHARACTERS} characters): "
+            f"{short_text_count} row(s); manually review or exclude before training."
+        )
 
     labels = cleaned["category"]
     invalid_labels = sorted(set(labels[labels.ne("")]) - set(LEGAL_CATEGORIES))

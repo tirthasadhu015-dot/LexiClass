@@ -167,8 +167,8 @@
 
 ## Current Progress
 
-**Status:** Phase 6 evaluator implemented; CLI verified it stops on the 0-record dataset without creating evaluation outputs
+**Status:** The ML training CSV remains empty and no classifier has been trained. A separate legal-reference knowledge base is implemented from the existing JSON: 1,070 rows processed, with one incomplete source record, no invalid records, and no duplicates. The full test suite passes (69 tests). No source-register approval was made.
 
-**Next Priority:** Add genuine labeled data, train models, then generate held-out evaluation reports and figures.
+**Next Priority:** Verify legal reference details and source links as needed. Separately, review source rights for ML training, add genuine categorized documents, adjudicate labels, and validate; the training design requires at least 10 usable documents per category before training.
 
 **Completion Rule:** Mark a task as completed only after it has been implemented and tested.

@@ -21,6 +21,17 @@ models/*
 dataset/*
 !dataset/.gitkeep
 !dataset/legal_documents.csv
+!dataset/README.md
+!dataset/source_register.csv
+!dataset/raw/
+dataset/raw/*
+!dataset/raw/.gitkeep
+!dataset/processed/
+dataset/processed/*
+!dataset/processed/.gitkeep
+!dataset/annotations/
+dataset/annotations/*
+!dataset/annotations/.gitkeep
 
 
 

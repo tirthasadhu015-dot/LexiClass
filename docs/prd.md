@@ -437,3 +437,9 @@ By combining automated document extraction, intelligent text processing, and sup
 **Product Vision:**
 
 "Making Legal Document Classification Smarter, Faster, and More Accessible."
+
+## Legal Knowledge Base (separate reference feature)
+
+The application includes a searchable Indian legal reference page backed by `dataset/constitution/processed/legal_reference.csv`, generated from the existing source JSON. Users can filter by exact Act Code and section and search titles, descriptions, and keywords. Results show source-provided description, purpose, context, penalty information, source name, and the supplied source URL. This feature is informational and remains separate from document classification and its five ML labels.
+
+Descriptions and penalty fields are dataset-provided reference metadata, not guaranteed official statutory text. The UI must ask users to verify exact language and current legal status at the linked source. It must not state that a provision is currently in force, map IPC provisions to BNS automatically, or present its output as legal advice. Processing must report malformed, duplicate, and incomplete records without silently discarding incomplete dictionary records.

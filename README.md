@@ -2,7 +2,7 @@
 
 **Smarter Legal Documents, Simplified.**
 
-LexiClass AI is a Python and Streamlit project for classifying legal PDF and DOCX documents into Criminal Law, Civil Law, Constitutional Law, Property Law, or Other Legal Domains. The PDF/DOCX text extraction module is implemented; classification and model training are not implemented. No trained model is included.
+LexiClass AI is a Python and Streamlit project for classifying legal PDF and DOCX documents into Criminal Law, Civil Law, Constitutional Law, Property Law, or Other Legal Domains. The document extraction, preprocessing, training/evaluation pipeline, and Streamlit interface are implemented. The dataset currently has no labeled records, so no trained model is included and classification is unavailable.
 
 ## Requirements
 
@@ -32,7 +32,7 @@ If PowerShell blocks activation, use the environment's interpreter directly:
 streamlit run app.py
 ```
 
-The initial Streamlit page only confirms that setup is in progress. Classification requires a permitted, labeled dataset and a trained model, neither of which is included.
+The Streamlit interface includes a dashboard, document classification page, and project information page. Classification remains unavailable until a permitted, labeled dataset is used to train a model.
 
 ## Project layout
 
@@ -52,13 +52,15 @@ See `docs/` for the architecture, requirements, design system, and development r
 | Column | Purpose |
 |---|---|
 | `document_id` | Stable unique identifier for the record |
+| `document_title` | Title shown by the source |
 | `text` | Genuine legal document text that is permitted for this use |
 | `category` | One of the five supported category labels |
-| `source` | Citation, collection name, or other traceable source description |
-| `source_url` | Optional URL for locating the source |
-| `license` | Optional license or documented usage terms |
+| `source` | Source ID from the source register or traceable citation |
+| `source_url` | Direct document URL, when available |
+| `license` | Exact applicable license or documented use terms |
+| `language` | Document language, preferably an ISO 639-1 code |
 
-Keep the original citation and usage terms traceable. Do not include confidential material or documents without permission. Add actual sourced records only; do not treat this empty template as training data.
+`dataset/source_register.csv` records dataset-level source, version, format, license, terms, attribution, and review status. Keep citations and usage terms traceable. Do not include confidential material or documents without permission. Add actual sourced records only; do not treat this empty template as training data. See [dataset/README.md](dataset/README.md) for collection steps, manual labeling rules, duplicate handling, validation details, and the reviewed candidate-source assessment.
 
 Validate the CSV and print its row count and distribution across all five categories:
 
@@ -120,3 +122,63 @@ python evaluate_model.py
 ```
 
 The evaluator verifies dataset provenance and recreates the recorded stratified test split. It compares the saved Logistic Regression and Linear SVM candidates using only that held-out data. Reports and figures are written to `reports/evaluation/`. With the current header-only dataset (0 records), evaluation correctly stops and produces no scores or figures.
+
+## Streamlit interface
+
+Start the app from the project root:
+
+```powershell
+streamlit run app.py
+```
+
+The interface supports PDF and DOCX uploads up to 20 MiB. Uploaded documents are processed in memory, and the app shows extracted text before classification. The classify action remains disabled until both trained model artifacts are present. No accuracy, prediction, or confidence is shown without real model output.
+
+## Final project status
+
+### Overview and architecture
+
+LexiClass AI is a legal document organization project for five broad categories: Criminal Law, Civil Law, Constitutional Law, Property Law, and Other Legal Domains. The workflow is:
+
+`Streamlit upload -> PDF/DOCX validation and extraction -> legal text preprocessing -> saved fitted TF-IDF vectorizer -> saved classifier -> category display`
+
+Presentation lives in `src/streamlit_ui.py`; extraction, preprocessing, vectorization, training, evaluation, and prediction are separate modules under `src/`. Uploads remain in memory. The app is informational and does not provide legal advice.
+
+### Technology stack
+
+Python, Streamlit, pandas, NumPy, scikit-learn (TF-IDF, Logistic Regression, Linear SVM), joblib (model serialization), NLTK (declared dependency; not currently used by the active preprocessing pipeline), PyPDF, python-docx, Matplotlib, and Seaborn.
+
+### Implemented features
+
+- CSV schema validation, duplicate and category checks, and class distribution reporting.
+- In-memory PDF and DOCX extraction, including empty/corrupt file handling and a 20 MiB upload cap.
+- Conservative legal text normalization that preserves legal wording and negations.
+- Shared TF-IDF training/inference configuration, model training and held-out evaluation scripts, and guarded artifact loading.
+- Streamlit dashboard, upload/text preview, classification page, and About page. Classification stays disabled until a classifier and fitted vectorizer are available.
+- Unit and Streamlit upload integration tests.
+
+### Dataset, sources, and licensing
+
+`dataset/legal_documents.csv` contains only its header (0 records). No document sources or dataset licenses have been added, so there is no source provenance to report yet. The CSV has `source`, `source_url`, and `license` fields to record citations and permitted-use terms for future genuine records. Do not add confidential or unlicensed documents.
+
+### Model evaluation results
+
+No trained classifier or vectorizer exists in `models/`, and no evaluation report or figures exist. The dataset validator reports 0 records in each category. Running `evaluate_model.py` stops with “The dataset contains 0 labeled records”; therefore no accuracy, precision, recall, F1, confusion matrix, or classification report is available. No model performance is claimed.
+
+### Screenshots
+
+No application screenshots are included in the repository.
+
+### Known limitations and future improvements
+
+- Genuine classification requires permitted labeled data, successful training, and evaluation. This is the main pending requirement.
+- Scanned PDFs are unsupported because OCR is not implemented.
+- Dataset diversity, source licensing, label quality, and class balance remain unassessed until data is added.
+- Future work: collect and document lawful data sources, train and evaluate with genuine records, validate actual saved-model predictions, then consider OCR, classification history, and broader evaluation on external data.
+
+### Final task status
+
+| Status | Tasks |
+|---|---|
+| Completed and verified | Modular extraction and preprocessing; dataset validation; training/evaluation pipeline implementation; Streamlit upload integration; 34 automated tests passing. |
+| Partially completed | Prediction flow and artifact loading are implemented and covered with contract/error tests, but no trained artifacts are available for a genuine classification test. |
+| Pending | Add licensed, traceable labeled data; train and evaluate actual models; verify real predictions and record measured performance. |

@@ -114,11 +114,13 @@ The dataset should contain legal document text and corresponding category labels
 ### Dataset Columns
 
 - `document_id`: stable unique record identifier.
+- `document_title`: title shown by the source.
 - `text`: genuine legal document text permitted for this use.
 - `category`: one of the five supported category labels.
-- `source`: traceable citation, collection, or source description.
-- `source_url`: optional source URL.
-- `license`: optional license or documented usage terms.
+- `source`: source register ID or traceable citation.
+- `source_url`: direct document URL when available.
+- `license`: exact applicable license or documented usage terms.
+- `language`: language code for the document.
 
 ### Dataset Requirements
 
@@ -132,7 +134,7 @@ The dataset should contain legal document text and corresponding category labels
 Dataset file:
 
 `dataset/legal_documents.csv`
-The initial CSV is a header-only template, not a completed dataset. `src/dataset_validation.py` validates required fields, supported categories, duplicate IDs and normalized text, and reports class counts including zero-count categories. Add only genuine records with appropriate use rights and retain their source information.
+The initial CSV is a header-only template, not a completed dataset. `dataset/source_register.csv` captures source-level version, format, license, terms, attribution, and review status. `src/dataset_validation.py` validates the eight-column schema, required values, supported categories, duplicate IDs and normalized text, missing direct URLs, unusually short text, and category counts. Add only genuine records with appropriate use rights and retain their source information.
 
 ---
 
@@ -398,6 +400,12 @@ LexiClass AI will be considered functionally complete when:
 
 **Project Identity:** LexiClass AI  
 **Core Principle:** Intelligent Legal Classification with a Simple and Reliable User Experience.
+
+## Legal Knowledge Base decision
+
+The standalone `src/legal_knowledge_base.py` module handles the reference JSON at `dataset/raw/indian_constitution.json`; this is not the ML training corpus. The inspected file has 1,070 records: IPC 575, Constitution of India 493, CrPC 1, BNS 1. Do not describe it as constitution-only data, infer the five classification labels from its Act codes, or automatically replace IPC with BNS. Processing preserves the ten source fields and creates a separate CSV and JSON report. One source record is incomplete because `source_url` and `source_name` are blank; keep it flagged rather than fabricating provenance.
+
+Search is normalized substring matching plus exact Act-code/section filters. The Streamlit Legal Knowledge Base page is separate from classifier pages and calls no model. Dataset descriptions/penalty fields are not represented as authoritative statutory wording; users must verify current law at the source. No source-register approval is implied by this feature.
 
 
 

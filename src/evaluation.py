@@ -297,6 +297,10 @@ def evaluate_models(
     report = {
         "dataset_path": str(Path(dataset_path)),
         "dataset_sha256": training_report["dataset_sha256"],
+        "model_artifact_sha256": {
+            "classifier": hashlib.sha256((Path(model_dir) / "classifier.joblib").read_bytes()).hexdigest(),
+            "vectorizer": hashlib.sha256((Path(model_dir) / "tfidf_vectorizer.joblib").read_bytes()).hexdigest(),
+        },
         "scikit_learn_version": sklearn.__version__,
         "dataset_records": len(texts),
         "training_records": len(x_train),
@@ -364,8 +368,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
-
-
-
-
