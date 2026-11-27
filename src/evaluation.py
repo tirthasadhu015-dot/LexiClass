@@ -29,6 +29,7 @@ from src.data_preprocessing import preprocess_text
 from src.model_training import (
     DEFAULT_DATASET_PATH,
     DEFAULT_MODEL_DIR,
+    DEFAULT_RANDOM_STATE,
     DEFAULT_TEST_SIZE,
     MIN_SAMPLES_PER_CATEGORY,
     DatasetTrainingError,

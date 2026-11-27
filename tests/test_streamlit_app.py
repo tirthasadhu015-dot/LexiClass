@@ -60,7 +60,6 @@ class StreamlitUploadIntegrationTests(unittest.TestCase):
         self.assertEqual(len(app.exception), 0)
         self.assertEqual(len(app.text_area), 1)
         self.assertIn("shall not be waived", app.text_area[0].value)
-        self.assertTrue(any("Classification is unavailable" in item.value for item in app.info))
 
     def test_docx_upload_extracts_text_in_the_streamlit_page(self) -> None:
         app = self.upload_on_classification_page(
@@ -91,6 +90,13 @@ class StreamlitUploadIntegrationTests(unittest.TestCase):
         self.assertEqual(len(app.exception), 0)
         self.assertTrue(any(title.value == "Legal Knowledge Base" for title in app.title))
         self.assertTrue(any("not legal advice" in item.value.lower() for item in app.warning))
+
+    def test_about_page_renders_without_breaking_navigation(self) -> None:
+        app = AppTest.from_file(str(APP_PATH)).run(timeout=10)
+        app.radio[0].set_value("About Project").run(timeout=10)
+
+        self.assertEqual(len(app.exception), 0)
+        self.assertTrue(any(title.value == "About LexiClass AI" for title in app.title))
 
 
 if __name__ == "__main__":

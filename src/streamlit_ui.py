@@ -50,16 +50,27 @@ APP_CSS = """
   --success-green: #16A34A;
   --warning-amber: #F59E0B;
   --error-red: #DC2626;
+  --lexi-page: #F1F5F9;
+  --lexi-surface: #FFFFFF;
+  --lexi-surface-raised: #F8FAFC;
+  --lexi-text: #0F172A;
+  --lexi-muted: #475569;
+  --lexi-border: #CBD5E1;
+  --lexi-accent: #1D4ED8;
+  --lexi-accent-soft: #DBEAFE;
+  --lexi-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  color-scheme: light;
 }
-.stApp { background: var(--light-gray); color: var(--deep-navy); font-family: Inter, Roboto, sans-serif; }
-[data-testid="stSidebar"] { background: var(--white); border-right: 1px solid #E2E8F0; }
-[data-testid="stHeader"] { background: rgba(241, 245, 249, 0.92); }
-h1, h2, h3 { color: var(--deep-navy); letter-spacing: -0.02em; }
+.stApp { background: var(--lexi-page); color: var(--lexi-text); font-family: Inter, Roboto, sans-serif; }
+[data-testid="stSidebar"] { background: var(--lexi-surface); color: var(--lexi-text); border-right: 1px solid var(--lexi-border); }
+[data-testid="stHeader"] { background: var(--lexi-page); }
+h1, h2, h3 { color: var(--lexi-text); letter-spacing: -0.02em; }
 [data-testid="stMetric"] {
-  background: var(--white); border: 1px solid #E2E8F0; border-radius: 12px;
-  padding: 16px 18px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  background: var(--lexi-surface); color: var(--lexi-text);
+  border: 1px solid var(--lexi-border); border-radius: 12px;
+  padding: 16px 18px; box-shadow: var(--lexi-shadow);
 }
-[data-testid="stMetricLabel"] { color: var(--slate-gray); }
+[data-testid="stMetricLabel"] { color: var(--lexi-muted); }
 .stButton > button[kind="primary"] {
   background: var(--royal-blue); border-color: var(--royal-blue); color: var(--white);
   border-radius: 9px; min-height: 42px; font-weight: 600;
@@ -67,33 +78,135 @@ h1, h2, h3 { color: var(--deep-navy); letter-spacing: -0.02em; }
 .stButton > button[kind="primary"]:hover { background: #1D4ED8; border-color: #1D4ED8; }
 .stButton > button { border-radius: 9px; }
 .upload-panel {
-  background: var(--white); border: 1px dashed #93C5FD; border-radius: 12px;
+  background: var(--lexi-surface); color: var(--lexi-text);
+  border: 1px dashed var(--lexi-accent); border-radius: 12px;
   padding: 18px; margin: 8px 0 16px;
 }
-.eyebrow { color: var(--royal-blue); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.09em; }
+.eyebrow { color: var(--lexi-accent); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.09em; }
 .hero-panel {
-  background: linear-gradient(120deg, #FFFFFF 0%, #EFF6FF 100%);
-  border: 1px solid #DBEAFE; border-radius: 16px; padding: 28px 30px; margin-bottom: 18px;
+  background: linear-gradient(120deg, var(--lexi-surface), var(--lexi-surface-raised));
+  color: var(--lexi-text); border: 1px solid var(--lexi-border);
+  border-radius: 16px; padding: 28px 30px; margin-bottom: 18px;
 }
 .hero-panel h1 { margin: 4px 0 8px; font-size: 2.1rem; }
-.hero-panel p { color: #475569; margin-bottom: 0; }
+.hero-panel p { color: var(--lexi-muted); margin-bottom: 0; }
 .category-card {
-  background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px;
-  padding: 14px 16px; min-height: 74px; margin-bottom: 10px;
+  background: var(--lexi-surface); color: var(--lexi-text);
+  border: 1px solid var(--lexi-border); border-radius: 12px;
+  padding: 14px 16px; min-height: 74px; margin-bottom: 10px; box-shadow: var(--lexi-shadow);
 }
-.category-card strong { color: #0F172A; }
-.category-card span { display: block; color: #64748B; font-size: 0.86rem; margin-top: 4px; }
+.category-card strong { color: var(--lexi-text); }
+.category-card span { display: block; color: var(--lexi-muted); font-size: 0.86rem; margin-top: 4px; }
 .result-panel {
-  background: #FFFFFF; border: 1px solid #BFDBFE; border-left: 5px solid #2563EB;
-  border-radius: 12px; padding: 18px 20px; margin: 12px 0;
+  background: var(--lexi-surface); color: var(--lexi-text);
+  border: 1px solid var(--lexi-border); border-left: 5px solid var(--royal-blue);
+  border-radius: 12px; padding: 18px 20px; margin: 12px 0; box-shadow: var(--lexi-shadow);
 }
-.small-muted { color: #64748B; font-size: 0.88rem; }
+.small-muted { color: var(--lexi-muted); font-size: 0.88rem; }
+/* Theme tokens are populated from Streamlit's active theme on each render. */
+.stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
+  background-color: var(--lexi-page); color: var(--lexi-text);
+}
+[data-testid="stSidebar"] {
+  background-color: var(--lexi-surface); color: var(--lexi-text);
+  border-right: 1px solid var(--lexi-border);
+}
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"],
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"],
+[data-testid="stSidebar"] p, [data-testid="stSidebar"] label,
+[data-testid="stSidebar"] span, [data-testid="stSidebar"] small { color: var(--lexi-text); }
+[data-testid="stSidebar"] [data-testid="stCaptionContainer"],
+[data-testid="stSidebar"] [data-testid="stCaptionContainer"] * { color: var(--lexi-muted); }
+[data-testid="stSidebar"] [role="radiogroup"] label { background: transparent; }
+[data-testid="stSidebar"] input[type="radio"] { accent-color: var(--lexi-accent); }
+[data-testid="stHeader"] { background: var(--lexi-page); }
+h1, h2, h3, h4, h5, h6, p, li, label,
+[data-testid="stMarkdownContainer"], [data-testid="stWidgetLabel"] { color: var(--lexi-text); }
+[data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] * { color: var(--lexi-muted); }
+a { color: var(--lexi-accent); }
+[data-testid="stMetric"] {
+  background: var(--lexi-surface); color: var(--lexi-text);
+  border: 1px solid var(--lexi-border); box-shadow: var(--lexi-shadow);
+}
+[data-testid="stMetricLabel"], [data-testid="stMetricLabel"] *,
+[data-testid="stMetricValue"], [data-testid="stMetricValue"] *,
+[data-testid="stMetricDelta"], [data-testid="stMetricDelta"] *,
+[data-testid="stTooltipIcon"] { color: var(--lexi-text) !important; }
+.upload-panel, .category-card, .result-panel {
+  background: var(--lexi-surface); color: var(--lexi-text);
+  border-color: var(--lexi-border); box-shadow: var(--lexi-shadow);
+}
+.result-panel { border-left-color: var(--royal-blue); }
+.upload-panel { border-style: dashed; border-color: var(--lexi-accent); }
+.hero-panel {
+  background: linear-gradient(120deg, var(--lexi-surface), var(--lexi-surface-raised));
+  color: var(--lexi-text); border-color: var(--lexi-border);
+}
+.hero-panel p, .category-card span, .small-muted { color: var(--lexi-muted); }
+.category-card strong, .result-panel h2, .result-panel p { color: var(--lexi-text); }
+.eyebrow { color: var(--lexi-accent); }
+.stButton > button { color: var(--lexi-text); border-color: var(--lexi-border); }
+.stButton > button:not([kind="primary"]) { background: var(--lexi-surface); }
+input, textarea, [data-baseweb="select"] > div {
+  background-color: var(--lexi-surface) !important; color: var(--lexi-text) !important;
+  border-color: var(--lexi-border) !important;
+}
+input::placeholder, textarea::placeholder { color: var(--lexi-muted) !important; opacity: 0.85; }
+[data-testid="stExpander"] { background: var(--lexi-surface); border-color: var(--lexi-border); }
 @media (max-width: 700px) {
   .hero-panel { padding: 20px; }
   .hero-panel h1 { font-size: 1.65rem; }
 }
 </style>
 """
+
+
+LIGHT_THEME_VARIABLES = {
+    "--lexi-page": "#F1F5F9",
+    "--lexi-surface": "#FFFFFF",
+    "--lexi-surface-raised": "#F8FAFC",
+    "--lexi-text": "#0F172A",
+    "--lexi-muted": "#475569",
+    "--lexi-border": "#CBD5E1",
+    "--lexi-accent": "#1D4ED8",
+    "--lexi-accent-soft": "#DBEAFE",
+}
+DARK_THEME_VARIABLES = {
+    "--lexi-page": "#0B1220",
+    "--lexi-surface": "#111827",
+    "--lexi-surface-raised": "#1E293B",
+    "--lexi-text": "#F8FAFC",
+    "--lexi-muted": "#CBD5E1",
+    "--lexi-border": "#475569",
+    "--lexi-accent": "#93C5FD",
+    "--lexi-accent-soft": "#1E3A5F",
+}
+
+
+def _theme_context_type() -> str | None:
+    """Return Streamlit's theme type where available; context can lag or be absent."""
+    try:
+        value = st.context.theme.type
+    except Exception:
+        return None
+    return value if value in {"light", "dark"} else None
+
+
+def _theme_fallback_css(theme_type: str | None) -> str:
+    """Set root tokens from Streamlit's active theme, defaulting to Light.
+
+    Streamlit does not guarantee a public ``data-theme`` DOM attribute for
+    custom CSS. Its theme context is the source of truth on app render; the
+    explicit Light config and Light fallback cover first load and test contexts.
+    """
+    variables = DARK_THEME_VARIABLES if theme_type == "dark" else LIGHT_THEME_VARIABLES
+    color_scheme = "dark" if theme_type == "dark" else "light"
+    declarations = "\n".join(f"  {name}: {value};" for name, value in variables.items())
+    shadow = "0 2px 10px rgba(0, 0, 0, 0.28)" if theme_type == "dark" else "0 2px 8px rgba(15, 23, 42, 0.06)"
+    return (
+        f":root {{\n{declarations}\n"
+        f"  --lexi-shadow: {shadow};\n  color-scheme: {color_scheme};\n}}"
+    )
 
 
 @st.cache_resource(show_spinner=False)
@@ -104,7 +217,10 @@ def _cached_model_artifacts():
 
 
 def _inject_styles() -> None:
-    st.markdown(APP_CSS, unsafe_allow_html=True)
+    """Inject styles using the active Streamlit theme, with Light as fallback."""
+    fallback = _theme_fallback_css(_theme_context_type())
+    styled_css = APP_CSS.replace("</style>", f"{fallback}\n</style>")
+    st.markdown(styled_css, unsafe_allow_html=True)
 
 
 def _dataset_summary() -> tuple[int | None, str]:

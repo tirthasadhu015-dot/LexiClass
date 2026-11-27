@@ -428,3 +428,7 @@ The interface must balance professional legal branding with modern AI-inspired v
 **Core Design Principle:**
 
 "Professional Legal Intelligence. Simple User Experience."
+
+## Theme-aware contrast
+
+The Light theme uses the documented light palette and is the configured default. The Dark theme keeps the same layout and brand accents while switching page/surface, text, muted-text, and border tokens to dark-mode values. The app reads Streamlit's active theme from `st.context.theme.type` when rendering and uses Light when the context is missing or unavailable. Do not rely on undocumented DOM theme attributes. All cards, metrics, sidebar navigation, captions, and form controls must use the shared theme tokens rather than pairing fixed light surfaces with fixed light-theme text colors. Maintain at least WCAG AA contrast for normal-size text in both palettes.
