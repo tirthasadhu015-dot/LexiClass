@@ -1,1 +1,2 @@
 source_id,source_name,source_url,dataset_version,format,license,license_url,terms_url,accessed_on,attribution,usage_notes,review_status
+src_lexiclass_seed,LexiClass Curated Legal Samples,https://github.com/tirthasadhu015-dot/LexiClass,v1.0,csv,cc-by-4.0,https://creativecommons.org/licenses/by/4.0/,https://github.com/tirthasadhu015-dot/LexiClass,2026-11-27,LexiClass AI Project Seed Data,Curated legal domain sample texts for NLP classifier training and testing,approved
