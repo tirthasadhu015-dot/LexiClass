@@ -1,0 +1,194 @@
+{
+  "dataset_path": "C:\\Users\\TIRTHA SADHU\\OneDrive\\Desktop\\lexilegal\\dataset\\legal_documents.csv",
+  "dataset_sha256": "15648431a0165c1409b82e79f9615cfa7e250484a355875d7a7342f6d875d1cd",
+  "scikit_learn_version": "1.9.1",
+  "sample_count": 50,
+  "training_count": 40,
+  "test_count": 10,
+  "class_distribution": {
+    "Criminal Law": 10,
+    "Civil Law": 10,
+    "Constitutional Law": 10,
+    "Property Law": 10,
+    "Other Legal Domains": 10
+  },
+  "split": {
+    "test_size": 0.2,
+    "random_state": 42,
+    "stratified": true
+  },
+  "selection_metric": "mean 5-fold cross-validation macro F1",
+  "selected_model": "Logistic Regression",
+  "candidate_artifacts": {
+    "Logistic Regression": "candidates\\logistic_regression.joblib",
+    "Linear SVM": "candidates\\linear_svm.joblib"
+  },
+  "candidate_results": {
+    "Logistic Regression": {
+      "cross_validation": {
+        "accuracy": 0.7,
+        "precision_macro": 0.7166666666666666,
+        "recall_macro": 0.7200000000000001,
+        "f1_macro": 0.6733333333333332
+      },
+      "held_out_test": {
+        "accuracy": 0.8,
+        "precision_macro": 0.8666666666666666,
+        "recall_macro": 0.8,
+        "f1_macro": 0.7866666666666666,
+        "per_class": {
+          "Criminal Law": {
+            "precision": 0.6666666666666666,
+            "recall": 1.0,
+            "f1-score": 0.8,
+            "support": 2.0
+          },
+          "Civil Law": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "Constitutional Law": {
+            "precision": 0.6666666666666666,
+            "recall": 1.0,
+            "f1-score": 0.8,
+            "support": 2.0
+          },
+          "Property Law": {
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1-score": 0.6666666666666666,
+            "support": 2.0
+          },
+          "Other Legal Domains": {
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1-score": 0.6666666666666666,
+            "support": 2.0
+          }
+        },
+        "confusion_matrix": [
+          [
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            2,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    "Linear SVM": {
+      "cross_validation": {
+        "accuracy": 0.7,
+        "precision_macro": 0.7166666666666666,
+        "recall_macro": 0.7200000000000001,
+        "f1_macro": 0.6733333333333332
+      },
+      "held_out_test": {
+        "accuracy": 0.8,
+        "precision_macro": 0.8666666666666666,
+        "recall_macro": 0.8,
+        "f1_macro": 0.7866666666666666,
+        "per_class": {
+          "Criminal Law": {
+            "precision": 0.6666666666666666,
+            "recall": 1.0,
+            "f1-score": 0.8,
+            "support": 2.0
+          },
+          "Civil Law": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "Constitutional Law": {
+            "precision": 0.6666666666666666,
+            "recall": 1.0,
+            "f1-score": 0.8,
+            "support": 2.0
+          },
+          "Property Law": {
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1-score": 0.6666666666666666,
+            "support": 2.0
+          },
+          "Other Legal Domains": {
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1-score": 0.6666666666666666,
+            "support": 2.0
+          }
+        },
+        "confusion_matrix": [
+          [
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            2,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            0,
+            1
+          ]
+        ]
+      }
+    }
+  }
+}

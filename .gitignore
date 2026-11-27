@@ -16,9 +16,6 @@ env/
 # User uploads and generated model/data artifacts
 uploads/*
 !uploads/.gitkeep
-models/*
-!models/.gitkeep
-dataset/*
 !dataset/.gitkeep
 !dataset/legal_documents.csv
 !dataset/README.md
